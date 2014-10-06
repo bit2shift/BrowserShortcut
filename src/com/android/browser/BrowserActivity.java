@@ -10,19 +10,15 @@ import android.widget.EditText;
 
 public class BrowserActivity extends Activity
 {
-	private static final String TITLE = "Browser Shortcut";
-	private static final Object TAG = new Object();
+	private EditText text = null;
 
 	private class ClickListener implements DialogInterface.OnClickListener
 	{
 		public void onClick(DialogInterface dialog, int which)
 		{
-			//get textbox from dialog
-			EditText box = (EditText)((AlertDialog)dialog).getWindow().getDecorView().findViewWithTag(TAG);
-
-			//issue intent
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(box.getEditableText().toString()));
-			BrowserActivity.this.startActivity(Intent.createChooser(intent, TITLE));
+			CharSequence url = BrowserActivity.this.text.getEditableText();
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+			BrowserActivity.this.startActivity(Intent.createChooser(intent, "Choose browser"));
 			BrowserActivity.this.finish();
 		}
 	}
@@ -36,16 +32,12 @@ public class BrowserActivity extends Activity
 	}
 
 	@Override
-	public void onCreate(Bundle savedState)
+	public void onCreate(Bundle ignored)
 	{
-		super.onCreate(savedState);
-		EditText textbox = new EditText(this);
-		textbox.setTag(TAG);
-
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle(TITLE);
+		super.onCreate(ignored);
+		AlertDialog.Builder alert = new AlertDialog.Builder(this, 3);
 		alert.setMessage("Enter URL");
-		alert.setView(textbox);
+		alert.setView(this.text = new EditText(this));
 		alert.setPositiveButton("Go", new ClickListener());
 		alert.setOnCancelListener(new CancelListener());
 		alert.show();
